@@ -5,7 +5,7 @@ PVector[] velocities;
 float[] radii;
 float[] masses;
 color[] colors;
-int numOfParticles=350;
+int numOfParticles=150;
 float tickRate = 1.0f/60.0f;
 float lastMillis=0;
 
@@ -23,30 +23,30 @@ void setup() {
     radii[i] = sqrt(masses[i])*6;
     particles[i] = new PVector(random(-width/2, width/2), random(-height/2, height/2));
     velocities[i] = PVector.random2D().mult(40);
-    colors[i] = color(random(255),255,255);
+    colors[i] = color(random(255), 255, 255);
   }
 }
 float deltaT=0;
 
 void draw() {
   background(25);
-  text(frameRate,0,10);
+  //text(frameRate, 0, 10);
   noStroke();
-  translate(width/2, height/2);  
+  translate(width/2, height/2);
   float currentMillis = millis();
   deltaT += (currentMillis - lastMillis) / 1000f;
   lastMillis = currentMillis;
-  
+
   Boolean shouldPhysicsTick=false;
-  if(deltaT > tickRate){
-      shouldPhysicsTick = true;
+  if (deltaT > tickRate) {
+    shouldPhysicsTick = true;
   }
   for (int i=0; i<numOfParticles; i++) {
     PVector p = particles[i];
     PVector vel = velocities[i];
     float radius = radii[i];
 
-    if(shouldPhysicsTick){
+    if (shouldPhysicsTick) {
       CheckCollision(i);
       Move(p, vel);
       deltaT = 0;
@@ -60,7 +60,7 @@ void CheckCollision(int index) {
   float r1 = radii[index];
   float m1 = masses[index];
   PVector v1 = velocities[index];
-  CheckWalls(p1,v1,r1);
+  CheckWalls(p1, v1, r1);
   for (int i=index+1; i<numOfParticles; i++) {
     if (i==index) {
       continue;
@@ -77,7 +77,7 @@ void CheckCollision(int index) {
       continue;
     }
     float relVel = PVector.dot(v1.copy().sub(v2), deltaP);
-    if (relVel >= 0){
+    if (relVel >= 0) {
       continue;
     }
     float den = (m1+m2)* dist2;
@@ -96,12 +96,12 @@ void CheckCollision(int index) {
     float numB = PVector.dot(vDiffB, deltaPB);
     float facB = (2 * m1 * numB)/den;
     PVector deltaVB = PVector.mult(deltaPB, facB);
-    
+
     velocities[index].add(deltaVA);
     velocities[i].add(deltaVB);
   }
 }
-void CheckWalls(PVector p1,PVector v1, float r1){
+void CheckWalls(PVector p1, PVector v1, float r1) {
   if (p1.x+r1>width/2) {
     v1.x*=-1;
     p1.x = width/2-r1;
